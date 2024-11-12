@@ -7,10 +7,10 @@ class player:
         self.yPos = yPos
         self.surface = surface
         self.grassTiles = grassTiles
-        self.leftSensor = pygame.Rect(self.xPos - 70, self.yPos + 20, 70, 10)
-        self.rightSensor = pygame.Rect(self.xPos + 20, self.yPos + 20, 70, 10)
-        self.topSensor = pygame.Rect(self.xPos + 10, self.yPos - 70, 10, 70)
-        self.bottomSensor = pygame.Rect(self.xPos + 10, self.yPos + 70, 10, 70)
+        self.leftSensor = pygame.Rect(self.xPos - 80, self.yPos, 50, 10)
+        self.rightSensor = pygame.Rect(self.xPos, self.yPos, 50, 10)
+        self.topSensor = pygame.Rect(self.xPos, self.yPos, 10, 50)
+        self.bottomSensor = pygame.Rect(self.xPos, self.yPos, 10, 50)
         self.facing = 'up'
         self.origin = pygame.transform.scale(pygame.image.load('car.png'), (32, 64))
         self.acceleration = 3

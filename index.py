@@ -1,6 +1,10 @@
 import pygame
 import pytmx
 from nn import nn
+import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split
+import tensorflow as tf
 pygame.init()
 from player import player
 
@@ -88,7 +92,32 @@ while running:
     clock.tick(30)
 
 pygame.quit()
-# print(playerObj.sensorData )
+# print(playerObj.sensorData)
+array = playerObj.sensorData
 
-model = nn(playerObj.sensorData)
-model.train()
+# data = pd.DataFrame(array)
+# x = data.iloc[:, :4].values
+# y = data.iloc[:, -1].values
+# y = tf.keras.utils.to_categorical(y, num_classes=4)
+
+
+# x_train, x_test, y_train, y_test = train_test_split(x,y, test_size=0.1, random_state=0)
+
+
+
+# try:
+#     ann = tf.keras.models.load_model('car.keras')
+#     print('loading existing model')
+# except:  
+#     print('creating new model')  
+#     ann = tf.keras.models.Sequential()
+#     ann.add(tf.keras.layers.Dense(units=6, activation='relu'))
+#     ann.add(tf.keras.layers.Dense(units=6, activation='relu'))
+#     ann.add(tf.keras.layers.Dense(units=4, activation='softmax')) 
+
+# ann.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=0.001), loss = 'categorical_crossentropy' , metrics = ['accuracy'])
+    
+# ann.fit(x_train, y_train, batch_size = 32, epochs = 500)
+
+# result = ann.predict(np.array([[1, 0, 0, 0,]]))
+# print(result)

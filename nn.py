@@ -18,7 +18,7 @@ class nn:
             ann = tf.keras.models.load_model('car.keras')
         except:    
             ann = tf.keras.models.Sequential()
-            ann.add(tf.keras.layers.Dense(units=4, activation='relu'))
+            ann.add(tf.keras.layers.Dense(units=6, activation='relu'))
             ann.add(tf.keras.layers.Dense(units=6, activation='relu'))
             ann.add(tf.keras.layers.Dense(units=4, activation='softmax'))  
             ann.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=0.001), loss = 'categorical_crossentropy' , metrics = ['accuracy'])
