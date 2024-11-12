@@ -31,4 +31,5 @@ class nn:
 
     def predictDirection(self, value):
         ann = tf.keras.models.load_model('car.keras')
-        result = ann.predict(np.array([value]))    
+        result = ann.predict(np.array([value]))   
+        return result 
