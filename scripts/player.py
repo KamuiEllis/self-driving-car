@@ -7,10 +7,10 @@ class player:
         self.yPos = yPos
         self.surface = surface
         self.grassTiles = grassTiles
-        self.leftSensor = pygame.Rect(self.xPos - 70, self.yPos + 20, 70, 10)
-        self.rightSensor = pygame.Rect(self.xPos + 20, self.yPos + 20, 70, 10)
-        self.topSensor = pygame.Rect(self.xPos + 10, self.yPos - 70, 10, 70)
-        self.bottomSensor = pygame.Rect(self.xPos + 10, self.yPos + 70, 10, 70)
+        self.leftSensor = pygame.Rect(self.xPos - 40, self.yPos + 20, 40, 10)
+        self.rightSensor = pygame.Rect(self.xPos + 40, self.yPos + 20, 40, 10)
+        self.topSensor = pygame.Rect(self.xPos + 10, self.yPos - 70, 10, 40)
+        self.bottomSensor = pygame.Rect(self.xPos + 10, self.yPos + 40, 10, 70)
         self.facing = 'up'
         self.origin = pygame.transform.scale(pygame.image.load('car.png'), (32, 64))
         self.acceleration = 3
@@ -20,6 +20,8 @@ class player:
         self.image = pygame.image.load('car.png')
         self.image = pygame.transform.scale(self.image, (32, 64))
         self.playerRect = pygame.Rect(self.xPos, self.yPos, width, height)
+        self.selectedRect = None
+        self.adjustmentMode = False
         
 
     def monitorSensors(self):
@@ -59,6 +61,68 @@ class player:
         data.append([left, right, top, bottom,result])
         self.sensorData = data
         
+    def adjustXPos(self, action):
+        if action == 'left':
+            self.selectedRect.x-=1
+ 
+        if action == 'right':
+            self.selectedRect.x+=1
+
+    def adjustYPos(self, action):
+        if action == 'up':
+            self.selectedRect.y-=1
+            
+ 
+        if action == 'down':
+            self.selectedRect.y+=1        
+            
+
+
+    def adjustHeight(self, action):
+        if action == 'top':
+            self.selectedRect.height-=1
+ 
+            # self.leftSensor.height = self.selectedRect.height
+        if action == 'bottom':
+            self.selectedRect.height+=1
+            
+            # self.leftSensor.height = self.selectedRect.height
+        
+
+    def adjustWidth(self, action):
+        if action == 'left':
+            self.selectedRect.width-=1
+          
+            # self.leftSensor.width = self.selectedRect.width
+        if action == 'right':
+            self.selectedRect.width+=1
+           
+            # self.leftSensor.width = self.selectedRect.width
+         
+       
+
+    def selectSensor(self, event): 
+       
+        if self.leftSensor.collidepoint(event.pos):
+            self.adjustmentMode = True
+            self.selectedRect = self.leftSensor
+
+        elif self.rightSensor.collidepoint(event.pos):
+            self.adjustmentMode = True
+            self.selectedRect = self.rightSensor 
+
+        elif self.topSensor.collidepoint(event.pos):
+            self.adjustmentMode = True
+            self.selectedRect = self.topSensor   
+
+        elif self.bottomSensor.collidepoint(event.pos):
+            self.selectedRect = self.bottomSensor  
+
+        else:
+            self.adjustmentMode = False
+
+
+
 
 
     def draw(self):

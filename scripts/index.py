@@ -1,17 +1,21 @@
 import pygame
 import pytmx
 from nn import nn
+from menu import menu
 import pandas as pd
+
 pygame.init()
 from player import player
 
-screen = pygame.display.set_mode((1000, 700)) 
+screen = pygame.display.set_mode((1666, 768)) 
+menu = menu(screen)
 
-tmx_data = pytmx.load_pygame("map.tmx")
+tmx_data = pytmx.load_pygame("./map.tmx")
+
 
 collision_rects = []
 
-mode = "manual"
+
 
 grass = tmx_data.get_layer_by_name('grass')
 if isinstance(grass, pytmx.TiledTileLayer):
@@ -47,6 +51,7 @@ def draw_layer(layer_name, alpha=255):
             tile = tmx_data.get_tile_image_by_gid(gid)
             if tile:
                 # Draw each tile at the correct position
+              
                 surface.blit(tile, (x * tmx_data.tilewidth, y * tmx_data.tileheight))
 
     # If using a separate surface for transparency, blit it onto the main screen
@@ -71,16 +76,38 @@ while running:
     draw_layer("road")
     draw_layer("grass")
 
+    if event.type == pygame.MOUSEBUTTONDOWN:
+        playerObj.selectSensor(event)
+        print('mouse down')
 
-    if keys[pygame.K_UP]:
-        playerObj.moveUp()
-    elif keys[pygame.K_LEFT]:
-        playerObj.moveLeft()
-    elif keys[pygame.K_RIGHT]:
-        playerObj.moveRight()
-    elif keys[pygame.K_DOWN]:
-        playerObj.moveDown()    
+    if playerObj.adjustmentMode == False:
+        if keys[pygame.K_UP]:
+            playerObj.moveUp()
+        elif keys[pygame.K_LEFT]:
+            playerObj.moveLeft()
+        elif keys[pygame.K_RIGHT]:
+            playerObj.moveRight()
+        elif keys[pygame.K_DOWN]:
+            playerObj.moveDown()    
+    else:
+        if keys[pygame.K_LEFT]:
+            playerObj.adjustWidth('left') 
+        elif keys[pygame.K_RIGHT]:
+            playerObj.adjustWidth('right')   
+        elif keys[pygame.K_UP]:
+            playerObj.adjustHeight('top') 
+        elif keys[pygame.K_DOWN]:
+            playerObj.adjustHeight('bottom')   
+        elif keys[pygame.K_i]:
+            playerObj.adjustYPos('up') 
+        elif keys[pygame.K_k]:
+            playerObj.adjustYPos('down')
+        elif keys[pygame.K_j]:
+            playerObj.adjustXPos('left')
+        elif keys[pygame.K_l]:
+            playerObj.adjustXPos('right')                           
 
+    menu.draw()
     playerObj.draw() 
    
     
@@ -90,5 +117,5 @@ while running:
 
 pygame.quit()
 # print(playerObj.sensorData)
-model = nn(playerObj.sensorData)
-model.train()
+# model = nn(playerObj.sensorData)
+# model.train()
