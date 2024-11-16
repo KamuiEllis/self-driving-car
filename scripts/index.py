@@ -108,6 +108,8 @@ while running:
             playerObj.adjustXPos('right')                           
 
     menu.draw()
+    if playerObj.selectedRect != None:
+        menu.drawSelectedItemDetails(playerObj.selectedRect.x, playerObj.selectedRect.y, playerObj.selectedRect.width, playerObj.selectedRect.height)
     playerObj.draw() 
    
     
@@ -116,6 +118,7 @@ while running:
     clock.tick(30)
 
 pygame.quit()
+playerObj.saveData()
 # print(playerObj.sensorData)
 # model = nn(playerObj.sensorData)
 # model.train()

@@ -1,0 +1,30 @@
+{
+    "leftSensor": {
+        "xPos": 605,
+        "yPos": 314,
+        "width": 62,
+        "height": 10
+    },
+    "rightSensor": {
+        "xPos": 704,
+        "yPos": 316,
+        "width": 58,
+        "height": 10
+    },
+    "topSensor": {
+        "xPos": 680,
+        "yPos": 222,
+        "width": 10,
+        "height": 63
+    },
+    "bottomSensor": {
+        "xPos": 680,
+        "yPos": 352,
+        "width": 10,
+        "height": 61
+    },
+    "car": {
+        "xPos": 670,
+        "yPos": 301
+    }
+}

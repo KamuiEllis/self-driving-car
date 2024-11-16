@@ -1,28 +1,72 @@
 import pygame
-
+import json
 
 class player:
     def __init__(self, surface, xPos, yPos, width, height, grassTiles):
+        with open('settings.json', 'r') as file:
+            data = json.load(file)
         self.xPos = xPos
         self.yPos = yPos
         self.surface = surface
         self.grassTiles = grassTiles
-        self.leftSensor = pygame.Rect(self.xPos - 40, self.yPos + 20, 40, 10)
-        self.rightSensor = pygame.Rect(self.xPos + 40, self.yPos + 20, 40, 10)
-        self.topSensor = pygame.Rect(self.xPos + 10, self.yPos - 70, 10, 40)
-        self.bottomSensor = pygame.Rect(self.xPos + 10, self.yPos + 40, 10, 70)
+        self.leftSensor = pygame.Rect(data["leftSensor"]["xPos"], data["leftSensor"]["yPos"], data["leftSensor"]["width"], data["leftSensor"]["height"])
+        self.rightSensor = pygame.Rect(data["rightSensor"]["xPos"], data["rightSensor"]["yPos"], data["rightSensor"]["width"], data["rightSensor"]["height"])
+        self.topSensor = pygame.Rect(data["topSensor"]["xPos"], data["topSensor"]["yPos"], data["topSensor"]["width"], data["topSensor"]["height"])
+        self.bottomSensor = pygame.Rect(data["bottomSensor"]["xPos"], data["bottomSensor"]["yPos"], data["bottomSensor"]["width"], data["bottomSensor"]["height"])
         self.facing = 'up'
         self.origin = pygame.transform.scale(pygame.image.load('car.png'), (32, 64))
         self.acceleration = 3
         self.speed = 2.5
         self.moving = False
         self.sensorData = []
+        self.rotateOffset = 100
+        self.adjustOffset = False
         self.image = pygame.image.load('car.png')
         self.image = pygame.transform.scale(self.image, (32, 64))
-        self.playerRect = pygame.Rect(self.xPos, self.yPos, width, height)
+        self.playerRect = pygame.Rect(data["car"]["xPos"], data["car"]["yPos"], width, height)
         self.selectedRect = None
         self.adjustmentMode = False
+        self.currentSelectedSensor = ''
         
+
+    def saveData(self):
+        data = {
+            "leftSensor": {
+                "xPos": self.leftSensor.x,
+                "yPos": self.leftSensor.y,
+                "width":self.leftSensor.width,
+                "height": self.leftSensor.height
+            },
+
+            "rightSensor": {
+                "xPos": self.rightSensor.x,
+                "yPos": self.rightSensor.y,
+                "width":self.rightSensor.width,
+                "height": self.rightSensor.height
+            }, 
+
+            "topSensor": {
+                "xPos": self.topSensor.x,
+                "yPos": self.topSensor.y,
+                "width": self.topSensor.width,
+                "height": self.topSensor.height
+            }, 
+
+            "bottomSensor": {
+                "xPos": self.bottomSensor.x,
+                "yPos": self.bottomSensor.y,
+                "width": self.bottomSensor.width,
+                "height": self.bottomSensor.height
+            },
+
+            "car": {
+                "xPos": self.playerRect.x,
+                "yPos": self.playerRect.y
+            }  
+        }
+
+        with open('settings.json', 'w') as file:
+            json.dump(data, file, indent=4)
 
     def monitorSensors(self):
         data = self.sensorData
@@ -105,21 +149,31 @@ class player:
        
         if self.leftSensor.collidepoint(event.pos):
             self.adjustmentMode = True
+            self.currentSelectedSensor = 'left'
             self.selectedRect = self.leftSensor
 
         elif self.rightSensor.collidepoint(event.pos):
             self.adjustmentMode = True
+            self.currentSelectedSensor = 'right'
             self.selectedRect = self.rightSensor 
 
         elif self.topSensor.collidepoint(event.pos):
             self.adjustmentMode = True
+            self.currentSelectedSensor = 'top'
             self.selectedRect = self.topSensor   
 
         elif self.bottomSensor.collidepoint(event.pos):
+            self.adjustmentMode = True
+            self.currentSelectedSensor = 'bottom'
             self.selectedRect = self.bottomSensor  
-
+        elif self.playerRect.collidepoint(event.pos):
+            self.adjustmentMode = True
+            self.currentSelectedSensor = 'car'
+            self.selectedRect = self.playerRect
         else:
             self.adjustmentMode = False
+            self.selectedRect = None
+            self.currentSelectedSensor = None
 
 
 
@@ -127,22 +181,44 @@ class player:
 
     def draw(self):
         self.monitorSensors()
-        pygame.draw.rect(self.surface, (255, 255, 255),self.leftSensor, 2)
-        pygame.draw.rect(self.surface, (255, 255, 255),self.rightSensor, 2)
-        pygame.draw.rect(self.surface, (255, 255, 255),self.topSensor, 2)
-        pygame.draw.rect(self.surface, (255, 255, 255),self.bottomSensor, 2)
 
-        if self.facing == 'up':
-            self.image = pygame.transform.rotate(self.origin, 0)
-        elif self.facing == 'down':
-             self.image = pygame.transform.rotate(self.origin, 180)
+        # Draw sensors with highlighting for the selected one
+        if self.currentSelectedSensor == 'left':
+            pygame.draw.rect(self.surface, (255, 255, 255), self.leftSensor, 2)
+        else:
+            pygame.draw.rect(self.surface, (205, 203, 47), self.leftSensor, 2)
+
+        if self.currentSelectedSensor == 'right':
+            pygame.draw.rect(self.surface, (255, 255, 255), self.rightSensor, 2)
+        else:
+            pygame.draw.rect(self.surface, (205, 203, 47), self.rightSensor, 2)
+
+        if self.currentSelectedSensor == 'top':
+            pygame.draw.rect(self.surface, (255, 255, 255), self.topSensor, 2)
+        else:
+            pygame.draw.rect(self.surface, (205, 203, 47), self.topSensor, 2)
+
+        if self.currentSelectedSensor == 'bottom':
+            pygame.draw.rect(self.surface, (255, 255, 255), self.bottomSensor, 2)
+        else:
+            pygame.draw.rect(self.surface, (205, 203, 47), self.bottomSensor, 2)
+
+        # Determine the angle based on facing direction
+        angle = 0
+        if self.facing == 'down':
+            angle = 180
         elif self.facing == 'left':
-            self.image = pygame.transform.rotate(self.origin, -90)  
+            angle = 90
         elif self.facing == 'right':
-            self.image = pygame.transform.rotate(self.origin, 90)       
-  
-        self.surface.blit(self.image, (self.playerRect.x, self.playerRect.y))
-        
+            angle = -90
+
+        # Rotate the image while keeping it centered
+        rotated_image = pygame.transform.rotate(self.origin, angle)
+        rotated_rect = rotated_image.get_rect(center=self.playerRect.center)
+
+        # Blit the rotated image onto the surface
+        self.surface.blit(rotated_image, rotated_rect.topleft)
+            
 
     def moveUp(self):   
         self.facing = 'up'
