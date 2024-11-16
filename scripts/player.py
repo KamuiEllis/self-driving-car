@@ -27,6 +27,7 @@ class player:
         self.selectedRect = None
         self.adjustmentMode = False
         self.currentSelectedSensor = ''
+        self.crash = False
         
 
     def saveData(self):
@@ -218,6 +219,11 @@ class player:
 
         # Blit the rotated image onto the surface
         self.surface.blit(rotated_image, rotated_rect.topleft)
+
+        if not self.playerRect.collidelist(self.grassTiles):
+            print('crashed')
+
+        
             
 
     def moveUp(self):   

@@ -14,8 +14,8 @@ tmx_data = pytmx.load_pygame("./map.tmx")
 
 
 collision_rects = []
-
-
+training = False
+seconds = 0
 
 grass = tmx_data.get_layer_by_name('grass')
 if isinstance(grass, pytmx.TiledTileLayer):
@@ -78,7 +78,12 @@ while running:
 
     if event.type == pygame.MOUSEBUTTONDOWN:
         playerObj.selectSensor(event)
-        print('mouse down')
+
+    if keys[pygame.K_TAB]:
+        if seconds > 150:
+            training = not training  
+            seconds = 0
+           
 
     if playerObj.adjustmentMode == False:
         if keys[pygame.K_UP]:
@@ -107,7 +112,7 @@ while running:
         elif keys[pygame.K_l]:
             playerObj.adjustXPos('right')                           
 
-    menu.draw()
+    menu.draw(training)
     if playerObj.selectedRect != None:
         menu.drawSelectedItemDetails(playerObj.selectedRect.x, playerObj.selectedRect.y, playerObj.selectedRect.width, playerObj.selectedRect.height)
     playerObj.draw() 
@@ -116,6 +121,8 @@ while running:
     # Update the display
     pygame.display.flip()
     clock.tick(30)
+    seconds+=30
+
 
 pygame.quit()
 playerObj.saveData()
