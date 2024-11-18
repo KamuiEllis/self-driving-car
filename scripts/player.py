@@ -4,15 +4,15 @@ import json
 class player:
     def __init__(self, surface, xPos, yPos, width, height, grassTiles):
         with open('settings.json', 'r') as file:
-            data = json.load(file)
+            self.data = json.load(file)
         self.xPos = xPos
         self.yPos = yPos
         self.surface = surface
         self.grassTiles = grassTiles
-        self.leftSensor = pygame.Rect(data["leftSensor"]["xPos"], data["leftSensor"]["yPos"], data["leftSensor"]["width"], data["leftSensor"]["height"])
-        self.rightSensor = pygame.Rect(data["rightSensor"]["xPos"], data["rightSensor"]["yPos"], data["rightSensor"]["width"], data["rightSensor"]["height"])
-        self.topSensor = pygame.Rect(data["topSensor"]["xPos"], data["topSensor"]["yPos"], data["topSensor"]["width"], data["topSensor"]["height"])
-        self.bottomSensor = pygame.Rect(data["bottomSensor"]["xPos"], data["bottomSensor"]["yPos"], data["bottomSensor"]["width"], data["bottomSensor"]["height"])
+        self.leftSensor = pygame.Rect(self.data["leftSensor"]["xPos"], self.data["leftSensor"]["yPos"], self.data["leftSensor"]["width"], self.data["leftSensor"]["height"])
+        self.rightSensor = pygame.Rect(self.data["rightSensor"]["xPos"], self.data["rightSensor"]["yPos"], self.data["rightSensor"]["width"], self.data["rightSensor"]["height"])
+        self.topSensor = pygame.Rect(self.data["topSensor"]["xPos"], self.data["topSensor"]["yPos"], self.data["topSensor"]["width"], self.data["topSensor"]["height"])
+        self.bottomSensor = pygame.Rect(self.data["bottomSensor"]["xPos"], self.data["bottomSensor"]["yPos"], self.data["bottomSensor"]["width"], self.data["bottomSensor"]["height"])
         self.facing = 'up'
         self.origin = pygame.transform.scale(pygame.image.load('car.png'), (32, 64))
         self.acceleration = 3
@@ -23,7 +23,7 @@ class player:
         self.adjustOffset = False
         self.image = pygame.image.load('car.png')
         self.image = pygame.transform.scale(self.image, (32, 64))
-        self.playerRect = pygame.Rect(data["car"]["xPos"], data["car"]["yPos"], width, height)
+        self.playerRect = pygame.Rect(self.data["car"]["xPos"], self.data["car"]["yPos"], width, height)
         self.selectedRect = None
         self.adjustmentMode = False
         self.currentSelectedSensor = ''
@@ -69,6 +69,34 @@ class player:
         with open('settings.json', 'w') as file:
             json.dump(data, file, indent=4)
 
+    def monitorPlayer(self):
+        
+        playerCollided = self.playerRect.collidelist(self.grassTiles)
+
+        if playerCollided > -1:
+            self.crash = True
+             # Reset playerRect position
+            self.playerRect.x = self.data["car"]["xPos"]
+            self.playerRect.y = self.data["car"]["yPos"]
+
+            # Reset leftSensor position
+            self.leftSensor.x = self.data['leftSensor']["xPos"]
+            self.leftSensor.y = self.data['leftSensor']["yPos"]
+
+            # Reset rightSensor position
+            self.rightSensor.x = self.data['rightSensor']["xPos"]
+            self.rightSensor.y = self.data['rightSensor']["yPos"]
+
+            # Reset topSensor position
+            self.topSensor.x = self.data['topSensor']["xPos"]
+            self.topSensor.y = self.data['topSensor']["yPos"]
+
+            # Reset bottomSensor position
+            self.bottomSensor.x = self.data['bottomSensor']["xPos"]
+            self.bottomSensor.y = self.data['bottomSensor']["yPos"]
+            self.crash = False
+        
+
     def monitorSensors(self):
         data = self.sensorData
         left = self.leftSensor.collidelist(self.grassTiles)
@@ -93,6 +121,7 @@ class player:
             bottom = 0    
 
         result = 0
+
 
         if self.facing == 'left':
             result = 0
@@ -182,7 +211,7 @@ class player:
 
     def draw(self):
         self.monitorSensors()
-
+        self.monitorPlayer()
         # Draw sensors with highlighting for the selected one
         if self.currentSelectedSensor == 'left':
             pygame.draw.rect(self.surface, (255, 255, 255), self.leftSensor, 2)
@@ -220,8 +249,7 @@ class player:
         # Blit the rotated image onto the surface
         self.surface.blit(rotated_image, rotated_rect.topleft)
 
-        if not self.playerRect.collidelist(self.grassTiles):
-            print('crashed')
+       
 
         
             

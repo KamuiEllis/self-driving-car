@@ -2,7 +2,9 @@ import pygame
 import pytmx
 from nn import nn
 from menu import menu
+import time
 import pandas as pd
+import asyncio
 
 pygame.init()
 from player import player
@@ -15,6 +17,7 @@ tmx_data = pytmx.load_pygame("./map.tmx")
 
 collision_rects = []
 training = False
+manual = True
 seconds = 0
 
 grass = tmx_data.get_layer_by_name('grass')
@@ -84,44 +87,69 @@ while running:
             training = not training  
             seconds = 0
            
-
-    if playerObj.adjustmentMode == False:
-        if keys[pygame.K_UP]:
-            playerObj.moveUp()
-        elif keys[pygame.K_LEFT]:
-            playerObj.moveLeft()
-        elif keys[pygame.K_RIGHT]:
-            playerObj.moveRight()
-        elif keys[pygame.K_DOWN]:
-            playerObj.moveDown()    
+    if keys[pygame.K_LSHIFT]:
+        if seconds > 150:
+            manual = not manual 
+            seconds = 0      
+    if manual == True:
+        if playerObj.adjustmentMode == False:
+            if keys[pygame.K_UP]:
+                playerObj.moveUp()
+            elif keys[pygame.K_LEFT]:
+                playerObj.moveLeft()
+            elif keys[pygame.K_RIGHT]:
+                playerObj.moveRight()
+            elif keys[pygame.K_DOWN]:
+                playerObj.moveDown()    
+        else:
+            if keys[pygame.K_LEFT]:
+                playerObj.adjustWidth('left') 
+            elif keys[pygame.K_RIGHT]:
+                playerObj.adjustWidth('right')   
+            elif keys[pygame.K_UP]:
+                playerObj.adjustHeight('top') 
+            elif keys[pygame.K_DOWN]:
+                playerObj.adjustHeight('bottom')   
+            elif keys[pygame.K_i]:
+                playerObj.adjustYPos('up') 
+            elif keys[pygame.K_k]:
+                playerObj.adjustYPos('down')
+            elif keys[pygame.K_j]:
+                playerObj.adjustXPos('left')
+            elif keys[pygame.K_l]:
+                playerObj.adjustXPos('right') 
     else:
-        if keys[pygame.K_LEFT]:
-            playerObj.adjustWidth('left') 
-        elif keys[pygame.K_RIGHT]:
-            playerObj.adjustWidth('right')   
-        elif keys[pygame.K_UP]:
-            playerObj.adjustHeight('top') 
-        elif keys[pygame.K_DOWN]:
-            playerObj.adjustHeight('bottom')   
-        elif keys[pygame.K_i]:
-            playerObj.adjustYPos('up') 
-        elif keys[pygame.K_k]:
-            playerObj.adjustYPos('down')
-        elif keys[pygame.K_j]:
-            playerObj.adjustXPos('left')
-        elif keys[pygame.K_l]:
-            playerObj.adjustXPos('right')                           
+        print('A.I mode')                                  
 
-    menu.draw(training)
+    menu.draw(training, manual)
+  
     if playerObj.selectedRect != None:
         menu.drawSelectedItemDetails(playerObj.selectedRect.x, playerObj.selectedRect.y, playerObj.selectedRect.width, playerObj.selectedRect.height)
     playerObj.draw() 
    
+   
+    if training == True:
+        if playerObj.crash == True:
+          
+            # time.sleep(5)
+            # print('crashed')
+            menu.drawTrainingRect() 
     
     # Update the display
     pygame.display.flip()
     clock.tick(30)
     seconds+=30
+
+    if training == True:
+        if playerObj.crash == True:
+          
+            # time.sleep(5)
+            # print('crashed')
+            # menu.drawTrainingRect() 
+            model = nn(playerObj.sensorData)
+            
+            asyncio.run(model.train())
+            playerObj.crash = False
 
 
 pygame.quit()

@@ -13,7 +13,7 @@ class nn:
         y = tf.keras.utils.to_categorical(self.dataset.iloc[:, -1].values, num_classes=4)
         self.x_train, self.x_test, self.y_train, self.y_test = train_test_split(x,y, test_size=0.2, random_state=0)
 
-    def train(self):
+    async def train(self):
         try:
             ann = tf.keras.models.load_model('car.keras')
         except:    

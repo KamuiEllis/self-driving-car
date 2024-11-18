@@ -1,5 +1,5 @@
 import pygame
-
+import time
 
 class menu:
     def __init__(self, surface):
@@ -8,7 +8,16 @@ class menu:
         self.training = False
         self.itemDetailsRect = pygame.Rect(400, 30, 200, 90)
         self.detailsRect = pygame.Rect(100, 30, 250, 70)
+        self.trainingDetails = pygame.Rect(0,350, 1666, 200)
 
+    def drawTrainingRect(self):
+        pygame.draw.rect(self.surface, (46, 46, 46), self.trainingDetails)
+        font = pygame.font.Font(None, 30)  # Use None to select the default font, 36 is the font size
+        text_color = (255, 255, 255)
+        trainingText = font.render('Training Neural Network', True, text_color)
+        trainingTextRect =  pygame.Rect(700, 450, 180, 80)
+        self.surface.blit(trainingText, trainingTextRect)
+        
 
     def drawSelectedItemDetails(self,xPos, yPos, width, height):
         font = pygame.font.Font(None, 20)  # Use None to select the default font, 36 is the font size
@@ -31,13 +40,13 @@ class menu:
         self.surface.blit(widthData, text_width)
         self.surface.blit(heightData, text_height)
 
-    def draw(self, training):
+    def draw(self, training, manual):
         self.training = training
         font = pygame.font.Font(None, 36) 
         text_color = (255, 255, 255)
  
         text_color = (221, 219, 67)
-        text_surface = font.render(f'Mode: {self.mode}', True, text_color)
+        text_surface = font.render(f'Mode: {"Manual" if manual == True else "A.I"}', True, text_color)
         text_rect =  pygame.Rect(110, 35, 180, 80)
 
         text_surface2 = font.render(f'Training Mode: {"On" if self.training == True else "Off"}', True, text_color)
