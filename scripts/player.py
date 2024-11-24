@@ -27,6 +27,7 @@ class player:
         self.selectedRect = None
         self.adjustmentMode = False
         self.currentSelectedSensor = ''
+        self.currentSensorInformation = [0,0,0,0]
         self.crash = False
         
 
@@ -94,7 +95,6 @@ class player:
             # Reset bottomSensor position
             self.bottomSensor.x = self.data['bottomSensor']["xPos"]
             self.bottomSensor.y = self.data['bottomSensor']["yPos"]
-            self.crash = False
         
 
     def monitorSensors(self):
@@ -133,6 +133,7 @@ class player:
             result = 3    
 
         data.append([left, right, top, bottom,result])
+        self.currentSensorInformation = [left, right, top, bottom,]
         self.sensorData = data
         
     def adjustXPos(self, action):

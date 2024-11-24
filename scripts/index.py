@@ -5,6 +5,8 @@ from menu import menu
 import time
 import pandas as pd
 import asyncio
+import tensorflow as tf
+import numpy as np
 
 pygame.init()
 from player import player
@@ -60,6 +62,20 @@ def draw_layer(layer_name, alpha=255):
     # If using a separate surface for transparency, blit it onto the main screen
     if alpha < 255:
         screen.blit(surface, (0, 0))
+
+try:
+    model = tf.keras.models.load_model('car.keras')
+except:
+    print('no model found')
+
+
+def deduce(data):
+    first = 0
+    for x in range(0, len(data)):
+        if data[x] > data[first]:
+            first = x
+    return first        
+
 
 clock = pygame.time.Clock()
 running = True
@@ -119,7 +135,19 @@ while running:
             elif keys[pygame.K_l]:
                 playerObj.adjustXPos('right') 
     else:
-        print('A.I mode')                                  
+
+        result = model.predict(np.array([playerObj.currentSensorInformation]))
+        direction = deduce(result[0])
+        if direction == 0:
+            playerObj.moveLeft()
+        elif direction == 1:
+            playerObj.moveRight()
+        elif playerObj == 2:
+            playerObj.moveUp()     
+        else:
+            playerObj.moveDown()       
+
+                                        
 
     menu.draw(training, manual)
   
@@ -127,13 +155,16 @@ while running:
         menu.drawSelectedItemDetails(playerObj.selectedRect.x, playerObj.selectedRect.y, playerObj.selectedRect.width, playerObj.selectedRect.height)
     playerObj.draw() 
    
-   
-    if training == True:
-        if playerObj.crash == True:
+    if playerObj.crash == True:
+        if training == True:
+            menu.drawTrainingRect() 
           
             # time.sleep(5)
             # print('crashed')
-            menu.drawTrainingRect() 
+        else:
+            playerObj.crash = False;    
+            
+            
     
     # Update the display
     pygame.display.flip()
@@ -146,9 +177,9 @@ while running:
             # time.sleep(5)
             # print('crashed')
             # menu.drawTrainingRect() 
-            model = nn(playerObj.sensorData)
+            model2 = nn(playerObj.sensorData)
             
-            asyncio.run(model.train())
+            asyncio.run(model2.train())
             playerObj.crash = False
 
 

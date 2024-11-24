@@ -1,30 +1,30 @@
 {
     "leftSensor": {
-        "xPos": 996,
-        "yPos": 541,
-        "width": 30,
-        "height": 10
+        "xPos": 1176,
+        "yPos": 508,
+        "width": 103,
+        "height": 53
     },
     "rightSensor": {
-        "xPos": 1068,
-        "yPos": 541,
-        "width": 31,
-        "height": 10
+        "xPos": 1323,
+        "yPos": 509,
+        "width": 119,
+        "height": 51
     },
     "topSensor": {
-        "xPos": 1042,
-        "yPos": 477,
-        "width": 10,
-        "height": 34
+        "xPos": 1272,
+        "yPos": 435,
+        "width": 54,
+        "height": 73
     },
     "bottomSensor": {
-        "xPos": 1042,
-        "yPos": 581,
-        "width": 10,
-        "height": 29
+        "xPos": 1278,
+        "yPos": 560,
+        "width": 47,
+        "height": 87
     },
     "car": {
-        "xPos": 1032,
-        "yPos": 528
+        "xPos": 1287,
+        "yPos": 517
     }
 }

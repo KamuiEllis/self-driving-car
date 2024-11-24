@@ -24,7 +24,7 @@ class nn:
             ann.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=0.001), loss = 'categorical_crossentropy' , metrics = ['accuracy'])
         ann.fit(self.x_train, self.y_train, batch_size = 32, epochs = 1500)
         self.saveModel(ann)
-        print('model saved')
+      
 
     def saveModel(self, ann):
         ann.save('car.keras')
